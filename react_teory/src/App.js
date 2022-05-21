@@ -1,7 +1,11 @@
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useState } from "react";
+import PostService from "./API/PostService";
 import PostFilter from "./components/PostFilter";
 import PostForm from "./components/PostForm";
 import PostList from "./components/PostList";
+import CustomButton from "./components/UI/button/CustomButton";
+import CustomModal from "./components/UI/modal/CustomModal";
+import { usePosts } from "./hooks/usePosts";
 import "./styles/App.css";
 
 function App() {
@@ -19,52 +23,62 @@ function App() {
     { id: 4, title: "BNB", body: "Цена курс риски" },
   ]);
 
+  const [isPostLoading, setIsPostLoading] = useState(false);
+
   const [filter, setFilter] = useState({ sortMode: "", searchQuery: "" });
+
+  const fetchPosts = async () => {
+    setIsPostLoading(true);
+
+    const serverPosts = (await PostService.getAll())
+      .splice(0, 10)
+      .map((post) => ({ id: post.id, title: post.title, body: post.body }));
+
+    setPosts(serverPosts);
+    setIsPostLoading(false);
+  };
+
+  useEffect(() => {
+    fetchPosts();
+  }, []);
 
   const createPost = (newPost) => {
     setPosts([...posts, newPost]);
+    setModal(false);
   };
 
   const removePost = (deletingPost) => {
     setPosts(posts.filter((post) => post.id !== deletingPost.id));
   };
 
-  const getSortedPosts = () => {
-    return filter.sortMode
-      ? [...posts].sort((postA, postB) =>
-          postA[filter.sortMode].localeCompare(postB[filter.sortMode])
-        )
-      : posts;
-  };
+  const searchedAndSortedPosts = usePosts(
+    posts,
+    filter.sortMode,
+    filter.searchQuery
+  );
 
-  const sortedPosts = useMemo(getSortedPosts, [posts, filter.sortMode]);
-
-  const searchedPosts = useMemo(() => {
-    return filter.searchQuery
-      ? sortedPosts.filter(
-          (post) =>
-            post.title
-              .toLowerCase()
-              .includes(filter.searchQuery.toLowerCase()) ||
-            post.body.toLowerCase().includes(filter.searchQuery.toLowerCase())
-        )
-      : sortedPosts;
-  }, [filter.searchQuery, sortedPosts]);
+  const [modal, setModal] = useState(false);
 
   return (
     <div className="App">
-      <PostForm posts={posts} create={createPost} />
+      <CustomButton style={{ marginTop: 30 }} onClick={() => setModal(true)}>
+        Создать пост
+      </CustomButton>
+      <CustomModal visible={modal} setVisible={setModal}>
+        <PostForm posts={posts} create={createPost} />
+      </CustomModal>
+
       <hr style={{ margin: "15px 0" }} />
       <PostFilter filter={filter} setFilter={setFilter} />
-      {searchedPosts.length ? (
-        <PostList
-          posts={searchedPosts}
-          remove={removePost}
-          title={"Список постов про программирование"}
-        />
-      ) : (
-        <h1 style={{ textAlign: "center" }}>Посты не найдены</h1>
-      )}
+
+      {isPostLoading
+      ?<h1>Идет загрузка</h1>
+      :<PostList
+        posts={searchedAndSortedPosts}
+        remove={removePost}
+        title={"Список постов про программирование"}
+      />}
+
       <PostList
         posts={posts2}
         remove={removePost}
