@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import React, { useState } from "react";
 import CustomButton from "./UI/button/CustomButton";
 import CustomInput from "./UI/input/CustomInput";
 
@@ -12,9 +12,6 @@ function PostForm({ create, ...props }) {
     setPost({ title: "", body: "" });
   };
 
-  const a = useMemo(() => console.log("ПОСТФОРМ"), []);
-  const b = useMemo(() => console.log("ПОСТФОРМ кнопка"), []);
-
   return (
     <form>
       <CustomInput
@@ -27,9 +24,7 @@ function PostForm({ create, ...props }) {
         placeholder="Описание поста"
         onChange={(e) => setPost({ ...post, body: e.target.value })}
       />
-      <CustomButton onChange={b} onClick={addNewPost}>
-        Опубликовать
-      </CustomButton>
+      <CustomButton onClick={addNewPost}>Опубликовать</CustomButton>
     </form>
   );
 }
