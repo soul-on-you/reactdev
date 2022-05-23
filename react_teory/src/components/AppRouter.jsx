@@ -1,10 +1,11 @@
-import React, { useState } from "react";
+import React, { useContext } from "react";
 import { Route, Routes } from "react-router-dom";
-import Login from "../pages/Login";
+import { AuthContext } from "../context";
 import { privateRoutes, publicRoutes } from "../router";
 
 function AppRouter() {
-  const [isAuth, setIsAuth] = useState(false);
+  // const [isAuth, setIsAuth] = useState(false);
+  const { isAuth } = useContext(AuthContext);
 
   return isAuth ? (
     <Routes>
@@ -14,17 +15,9 @@ function AppRouter() {
     </Routes>
   ) : (
     <Routes>
-      {publicRoutes.map((route) =>
-        route.path === "/login" ? (
-          <Route
-            {...route}
-            key={route.path}
-            element={<Login SetAuth={setIsAuth} />}
-          />
-        ) : (
-          <Route {...route} key={route.path} />
-        )
-      )}
+      {publicRoutes.map((route) => (
+        <Route {...route} key={route.path} />
+      ))}
     </Routes>
   );
 }
