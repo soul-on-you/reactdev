@@ -67,9 +67,11 @@ function PostIDPage() {
       ) : (
         <div>
           {comments.map((comment, index) => (
-            <div className="post">
-              <div className="post__content" key={comment.id}>
-                <strong>{`${index+1}. ${comment.email}. ${comment.name}`}</strong>
+            <div className="post" key={comment.id}>
+              <div className="post__content">
+                <strong>{`${index + 1}. ${comment.email}. ${
+                  comment.name
+                }`}</strong>
                 <p>{comment.body}</p>
               </div>
             </div>

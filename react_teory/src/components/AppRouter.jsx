@@ -1,19 +1,30 @@
-import React from "react";
+import React, { useState } from "react";
 import { Route, Routes } from "react-router-dom";
-import About from "../pages/About";
-import Home from "../pages/Home";
-import Page404 from "../pages/Page404";
-import PostIDPage from "../pages/PostIDPage";
-import Posts from "../pages/Posts";
+import Login from "../pages/Login";
+import { privateRoutes, publicRoutes } from "../router";
 
 function AppRouter() {
-  return (
+  const [isAuth, setIsAuth] = useState(false);
+
+  return isAuth ? (
     <Routes>
-      <Route path="/" element={<Home />} />
-      <Route path="/posts" element={<Posts />} />
-      <Route path="/posts/:id" element={<PostIDPage />} />
-      <Route path="/about" element={<About />} />
-      <Route path="*" element={<Page404 />} />
+      {privateRoutes.map((route) => (
+        <Route {...route} key={route.path} />
+      ))}
+    </Routes>
+  ) : (
+    <Routes>
+      {publicRoutes.map((route) =>
+        route.path === "/login" ? (
+          <Route
+            {...route}
+            key={route.path}
+            element={<Login SetAuth={setIsAuth} />}
+          />
+        ) : (
+          <Route {...route} key={route.path} />
+        )
+      )}
     </Routes>
   );
 }
