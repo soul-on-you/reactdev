@@ -1,8 +1,18 @@
 import React from "react";
 import classes from "./CustomButton.module.css";
 
-function CustomButton({ children, ...props }) {
-  return <button className={classes.customBtn} {...props}>{children}</button>;
+function CustomButton({ isActive, children, ...props }) {
+  const rootClasses = [classes.customBtn];
+
+  if (isActive) {
+    rootClasses.push(classes.active);
+  }
+  
+  return (
+    <button className={rootClasses.join(" ")} {...props}>
+      {children}
+    </button>
+  );
 }
 
 export default CustomButton;
