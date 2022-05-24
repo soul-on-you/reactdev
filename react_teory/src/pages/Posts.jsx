@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import PostService from "../API/PostService";
 import PostFilter from "../components/PostFilter";
 import PostForm from "../components/PostForm";
@@ -11,51 +11,47 @@ import CustomLoader from "../components/UI/Loader/CustomLoader";
 import { useFetching } from "../hooks/useFetching";
 import { getPagesCount } from "../utils/pages";
 import CustomPagination from "../components/UI/pagination/CustomPagination";
+import { useObserver } from "../hooks/useObserver";
+import CustomSelect from "../components/UI/select/CustomSelect";
 
 function Posts() {
-  const [posts, setPosts] = useState([
-    // {id: 1, title: "JavaScript", body: "Язык программировани"},
-    // {id: 2, title: "Python", body: "Язык программировани"},
-    // {id: 3, title: "Go", body: "Язык программировани"},
-    // {id: 4, title: "Solidity", body: "Язык программировани"},
-  ]);
+  const [posts, setPosts] = useState([]);
   const [filter, setFilter] = useState({ sortMode: "", searchQuery: "" });
   const [modal, setModal] = useState(false);
   const [limit, setLimit] = useState(10);
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(0);
+  const lastElement = useRef();
+  // const observer = useRef();
 
-  // const [isPostLoading, setIsPostLoading] = useState(false);
-  const [fetchPosts, isPostsLoading, postsError] = useFetching(async () => {
-    const response = await PostService.getAll(limit, page);
-    setPosts(response.data);
-    const totalCount = response.headers["x-total-count"];
-    setTotalPages(getPagesCount(totalCount, limit));
-  });
+  const [fetchPosts, isPostsLoading, postsError] = useFetching(
+    async (limit, page) => {
+      const response = await PostService.getAll(limit, page);
+      setPosts([...posts, ...response.data]);
+      const totalCount = response.headers["x-total-count"];
+      setTotalPages(getPagesCount(totalCount, limit));
+    }
+  );
 
-  //   const pagesArray = useMemo(() => {
-  //     const pages = [];
-  //     console.log("pagesArray");
-  //     for (let i = 0; i < totalPages; i++) pages.push(i + 1);
-  //     return pages;
-  //   }, [totalPages]);
+  // useEffect(() => {
+  //   if (isPostsLoading) return;
+  //   if (observer.current) observer.current.disconnect();
+  //   const callback = (entries, observer) => {
+  //     if (entries[0].isIntersecting && page < totalPages) {
+  //       setPage(page + 1);
+  //     }
+  //   };
+  //   observer.current = new IntersectionObserver(callback);
+  //   observer.current.observe(lastElement.current);
+  // }, [isPostsLoading]);
 
-  // const fetchPosts = async () => {
-  //     setIsPostLoading(true);
-  //     setTimeout(async () => {
-  //
-  //         const serverPosts = (await PostService.getAll())
-  //             .splice(0, 10)
-  //             .map((post) => ({id: post.id, title: post.title, body: post.body}));
-  //
-  //         setPosts(serverPosts);
-  //         setIsPostLoading(false);
-  //     }, 10000)
-  // };
+  useObserver(lastElement, isPostsLoading, page < totalPages, () =>
+    setPage(page + 1)
+  );
 
   useEffect(() => {
-    fetchPosts();
-  }, [page]);
+    fetchPosts(limit, page);
+  }, [page /*, limit*/]);
 
   const createPost = (newPost) => {
     setPosts([...posts, newPost]);
@@ -84,8 +80,30 @@ function Posts() {
       <hr style={{ margin: "15px 0" }} />
       <PostFilter filter={filter} setFilter={setFilter} />
 
+      <CustomSelect
+        value={limit}
+        onChange={(value) => {
+          setLimit(value);
+          setPage(0);
+        }}
+        defaultValue="Кол-во элементов на странице"
+        options={[
+          { text: "5", value: "5" },
+          { text: "10", value: "10" },
+          { text: "25", value: "25" },
+          { text: "40", value: "40" },
+          { text: "Все", value: "-1" },
+        ]}
+      />
+
       {postsError && <h1>Ошибка при запросе постов: {postsError}</h1>}
-      {isPostsLoading ? (
+      <PostList
+        posts={searchedAndSortedPosts}
+        remove={removePost}
+        title={"Список постов про программирование"}
+      />
+      <div ref={lastElement}></div>
+      {isPostsLoading && (
         <div
           style={{
             display: "flex",
@@ -96,12 +114,6 @@ function Posts() {
         >
           <CustomLoader />
         </div>
-      ) : (
-        <PostList
-          posts={searchedAndSortedPosts}
-          remove={removePost}
-          title={"Список постов про программирование"}
-        />
       )}
       <CustomPagination
         totalPages={totalPages}
