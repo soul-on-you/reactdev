@@ -1,16 +1,23 @@
-import { useState } from "react";
+import React from "react";
 import "./App.css";
+import Hover from "./components/Hover";
 import useInput from "./hooks/useInput";
 
 function App() {
   const username = useInput("");
   const password = useInput("");
 
+
+
   return (
     <div className="App">
-      <input type="text" placeholder="Login" {...username}></input>
-      <input type="text" placeholder="Password" {...password}></input>
-      <button onClick={() => console.log(username)}>Click</button>
+      <div>
+        <input type="text" placeholder="Login" {...username}></input>
+        <input type="text" placeholder="Password" {...password}></input>
+        <button onClick={() => console.log(username)}>Click</button>
+      </div>
+      <hr style={{ marginBottom: 30, marginTop: 30, width: "100%" }} />
+      <Hover />
     </div>
   );
 }
