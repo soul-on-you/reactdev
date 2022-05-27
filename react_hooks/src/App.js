@@ -1,13 +1,12 @@
 import React from "react";
 import "./App.css";
 import Hover from "./components/Hover";
+import List from "./components/List";
 import useInput from "./hooks/useInput";
 
 function App() {
   const username = useInput("");
   const password = useInput("");
-
-
 
   return (
     <div className="App">
@@ -18,6 +17,9 @@ function App() {
       </div>
       <hr style={{ marginBottom: 30, marginTop: 30, width: "100%" }} />
       <Hover />
+      <hr style={{ marginBottom: 30, marginTop: 30, width: "100%" }} />
+      <List />
+      <hr style={{ marginBottom: 30, marginTop: 30, width: "100%" }} />
     </div>
   );
 }

@@ -6,13 +6,14 @@ export const useObserver = (ref, canLoad, condition, callback) => {
   useEffect(() => {
     if (canLoad) return;
     if (observer.current) observer.current.disconnect();
-    
-    const innerCallback = (entries, observer) => {
+
+    const observerCallback = (entries, observer) => {
       if (entries[0].isIntersecting && condition) {
         callback();
       }
     };
-    observer.current = new IntersectionObserver(innerCallback);
+
+    observer.current = new IntersectionObserver(observerCallback);
     observer.current.observe(ref.current);
   }, [canLoad]);
 };

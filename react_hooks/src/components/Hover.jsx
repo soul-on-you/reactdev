@@ -6,7 +6,8 @@ const Hover = () => {
 
   const isHovered = useHover(hover);
 
-  useEffect(() => console.log(isHovered), [isHovered]);
+  // useEffect(() => console.log(isHovered), [isHovered]);
+  
   return (
     <div
       ref={hover}
