@@ -2,6 +2,7 @@ import React from "react";
 import "./App.css";
 import Hover from "./components/Hover";
 import List from "./components/List";
+import ListOfSecrch from "./components/ListOfSecrch";
 import useInput from "./hooks/useInput";
 
 function App() {
@@ -18,7 +19,9 @@ function App() {
       <hr style={{ marginBottom: 30, marginTop: 30, width: "100%" }} />
       <Hover />
       <hr style={{ marginBottom: 30, marginTop: 30, width: "100%" }} />
-      <List />
+      {/* <List />
+      <hr style={{ marginBottom: 30, marginTop: 30, width: "100%" }} /> */}
+      <ListOfSecrch />
       <hr style={{ marginBottom: 30, marginTop: 30, width: "100%" }} />
     </div>
   );
