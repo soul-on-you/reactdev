@@ -3,7 +3,7 @@ const cors = require("cors");
 const { graphqlHTTP } = require("express-graphql");
 const schema = require("./graphql/index");
 const { nanoid } = require("nanoid");
-const users = [{ id: 1, username: "Vova", age: 212 }];
+const users = [{ id: "1plP-epULu", username: "Vova", age: 212 }];
 
 const app = express();
 app.use(cors());
@@ -68,3 +68,5 @@ app.listen(port, console.log(`Сервер запущен на ${port} порт�
     }
   }
 */
+
+
