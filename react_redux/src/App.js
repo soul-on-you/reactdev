@@ -3,7 +3,7 @@ import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 
 function App() {
-  const cash = useSelector((state) => state.cash);
+  const cash = useSelector((state) => state.cash.cash);
   const dispatch = useDispatch();
 
   const addCash = (cash) => {
