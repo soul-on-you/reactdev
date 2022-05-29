@@ -7,6 +7,7 @@ import {
   addCustomerAction,
   deleteCustomerAction,
 } from "./store/customerReducer";
+import { fetchCustomers } from "./asyncActions/customers";
 
 function App() {
   const cash = useSelector((state) => state.cash.cash);
@@ -48,14 +49,13 @@ function App() {
         >
           Снять
         </button>
-        {/* <button className="btn" onClick={() => dispatch(fetchUsers())}>
-          ПОЛУЧИТЬ ЮЗЕРОВ--
-        </button> */}
       </div>
 
       <hr style={{ marginBottom: 30, marginTop: 30, width: "100%" }} />
-
       <div className="btns">
+        <button className="btn" onClick={() => dispatch(fetchCustomers())}>
+          Получить юзеров из базы
+        </button>
         <button className="btn" onClick={() => addCustomer(prompt())}>
           Добавить клиента
         </button>
