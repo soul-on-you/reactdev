@@ -1,0 +1,13 @@
+.customBtn {
+  padding: 5px 15px;
+  color: teal;
+  font-size: 14px;
+  background: transparent;
+  border: 1px solid teal;
+  cursor: pointer;
+}
+
+.active {
+  border: 2px solid orange;
+  font-weight: bold;
+}
