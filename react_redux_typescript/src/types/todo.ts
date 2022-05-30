@@ -8,14 +8,21 @@ export interface TodoState {
   todos: Todo[];
   loading: boolean;
   error: null | string;
+  page: number;
+  pageCount: number | null;
+  limit: number;
 }
 
 export enum TodoActionType {
   ADD_TODO = "ADD_TODO",
   REMOVE_TODO = "REMOVE_TODO",
+
   LOAD_TODO = "LOAD_TODO",
   LOAD_TODO_SUCCESS = "LOAD_TODO_SUCCESS",
   LOAD_TODO_ERROR = "LOAD_TODO_ERROR",
+
+  CHANGE_PAGE_TODO = "CHANGE_PAGE_TODO",
+  SET_PAGECOUNT_TODO = "SET_PAGECOUNT_TODO",
 }
 
 interface Action {
@@ -46,9 +53,21 @@ export interface LoadTodoErrorAction extends Action {
   payload: string;
 }
 
+export interface ChangeTodoPageAction extends Action {
+  type: TodoActionType.CHANGE_PAGE_TODO;
+  payload: number;
+}
+
+export interface SetTodoPageCountAction extends Action {
+  type: TodoActionType.SET_PAGECOUNT_TODO;
+  payload: number;
+}
+
 export type TodoAction =
   | AddTodoAction
   | RemoveTodoAction
   | LoadTodoAction
   | LoadTodoSuccessAction
-  | LoadTodoErrorAction;
+  | LoadTodoErrorAction
+  | ChangeTodoPageAction
+  | SetTodoPageCountAction;

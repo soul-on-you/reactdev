@@ -3,6 +3,7 @@ import React from "react";
 import { useActions } from "../hooks/useAction";
 // import { useTypedDispatch } from "../hooks/useTypedDispatch";
 import { useTypedSelector } from "../hooks/useTypedSelector";
+import Loader from "./UI/loader/CustomLoader";
 // import {
 //   addUserAction,
 //   deleteUserAction,
@@ -55,7 +56,10 @@ const UserList: React.FC<UserListProps> = (props) => {
         </button>
       </div>
 
-      {loading && <h2>Идет загрузка пользователей...</h2>}
+      {loading && (
+        //   <h2>Идет загрузка пользователей...</h2>
+        <Loader />
+      )}
       {error && <h2>Ошибка: {error}</h2>}
       {users.length > 0 ? (
         <div className="users">

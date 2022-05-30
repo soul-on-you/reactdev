@@ -1,12 +1,21 @@
-import * as React from "react";
+import React from "react";
 import { useActions } from "../hooks/useAction";
 import { useTypedSelector } from "../hooks/useTypedSelector";
+import Loader from "./UI/loader/CustomLoader";
+import Pagination from "./UI/pagination/CustomPagination";
 
 interface ITodoListProps {}
 
 const TodoList: React.FunctionComponent<ITodoListProps> = (props) => {
-  const { todos, loading, error } = useTypedSelector((state) => state.todo);
-  const { addTodoAction, removeTodoAction, fetchTodoAction } = useActions();
+  const { todos, loading, error, page, pageCount } = useTypedSelector(
+    (state) => state.todo
+  );
+  const {
+    addTodoAction,
+    removeTodoAction,
+    fetchTodoAction,
+    changeTodoPageAction,
+  } = useActions();
 
   const addTodo = () => {
     const title = prompt("Введите задание", "");
@@ -14,6 +23,10 @@ const TodoList: React.FunctionComponent<ITodoListProps> = (props) => {
     if (typeof title === "string")
       addTodoAction({ id: Date.now(), title, completed: false });
   };
+
+  //   useEffect(() => {
+  //     fetchTodoAction();
+  //   }, [page]);
 
   return (
     <>
@@ -36,13 +49,26 @@ const TodoList: React.FunctionComponent<ITodoListProps> = (props) => {
         </button>
       </div>
 
-      {loading && <h2>Идет загрузка пользователей...</h2>}
+      {pageCount && (
+        <Pagination
+          currentPage={page}
+          totalPages={pageCount}
+          setPage={(payload) => {
+            changeTodoPageAction(payload);
+            fetchTodoAction();
+          }}
+        />
+      )}
+      {
+        loading && <Loader />
+        //   <h2>Идет загрузка пользователей...</h2>
+      }
       {error && <h2>Ошибка: {error}</h2>}
       {todos.length > 0 ? (
         <div className="users">
           {todos.map((todo) => (
             <div className="user" key={todo.id}>
-              {todo.id}) {todo.title}: 
+              {todo.id}) {todo.title}:
               {todo.completed ? "Выполнено" : "Невыполенно"}
               <button className="btn" onClick={() => removeTodoAction(todo.id)}>
                 Удалить
