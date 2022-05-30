@@ -19,12 +19,14 @@ export type UserAction =
   | AddUserAction
   | DeleteUserAction
   | LoadUserAction
+  | LoadUserSuccessAction
   | LoadUserErrorAction;
 
 export enum UserActionTypes {
   ADD_USER = "ADD_USER",
   DELETE_USER = "DELETE_USER",
   LOAD_USERS = "LOAD_USERS",
+  LOAD_USERS_SUCCESS = "LOAD_USERS_SUCCESS",
   LOAD_USERS_ERROR = "LOAD_USERS_ERROR",
 }
 
@@ -40,6 +42,10 @@ export interface DeleteUserAction extends Action {
 
 export interface LoadUserAction extends Action {
   type: UserActionTypes.LOAD_USERS;
+}
+
+export interface LoadUserSuccessAction extends Action {
+  type: UserActionTypes.LOAD_USERS_SUCCESS;
 }
 
 export interface LoadUserErrorAction extends Action {

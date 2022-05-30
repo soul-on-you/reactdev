@@ -21,16 +21,18 @@ export const userReducer = (
         return {
           ...state,
           users: [...state.users, ...action.payload],
-          loading: false,
         };
       return { ...state, users: [...state.users, action.payload] };
     case UserActionTypes.DELETE_USER:
       return {
         ...state,
-        users: state.users.filter((user) => user.id !== action.payload),
+        // eslint-disable-next-line eqeqeq
+        users: state.users.filter((user) => user.id != action.payload),
       };
     case UserActionTypes.LOAD_USERS:
       return { ...state, loading: true, error: null };
+    case UserActionTypes.LOAD_USERS_SUCCESS:
+      return { ...state, loading: false };
     case UserActionTypes.LOAD_USERS_ERROR:
       return { ...state, loading: false, error: action.payload };
     default:

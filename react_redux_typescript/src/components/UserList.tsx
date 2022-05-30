@@ -1,42 +1,42 @@
 import { nanoid } from "nanoid";
 import React from "react";
-import { useTypedDispatch } from "../hooks/useTypedDispatch";
+import { useActions } from "../hooks/useAction";
+// import { useTypedDispatch } from "../hooks/useTypedDispatch";
 import { useTypedSelector } from "../hooks/useTypedSelector";
-import {
-  addUserAction,
-  deleteUserAction,
-  fetchUserAction,
-} from "../store/action-creators/user";
+// import {
+//   addUserAction,
+//   deleteUserAction,
+//   fetchUserAction,
+// } from "../store/action-creators/user";
 
 interface UserListProps {}
 
 const UserList: React.FC<UserListProps> = (props) => {
   const { users, loading, error } = useTypedSelector((state) => state.user);
-  const dispatch = useTypedDispatch();
+  //   const dispatch = useTypedDispatch();
+  const { addUserAction, deleteUserAction, fetchUserAction } = useActions();
 
   const addUser = () => {
     const name = prompt("Введите имя пользователя", "");
     const email = prompt("Введите email пользователя", "");
 
     if (typeof name === "string" && typeof email === "string")
-      dispatch(
-        addUserAction({
-          id: nanoid(6),
-          name,
-          email,
-        })
-      );
+      addUserAction({
+        id: nanoid(6),
+        name,
+        email,
+      });
   };
 
   const deleteUser = (id: number | string) => {
-    dispatch(deleteUserAction(id));
+    deleteUserAction(id);
   };
 
   return (
     <>
       <h1>Список пользователей</h1>
       <div className="btns">
-        <button className="btn" onClick={() => dispatch(fetchUserAction())}>
+        <button className="btn" onClick={() => fetchUserAction()}>
           Загрузить пользователей
         </button>
         <button className="btn" onClick={addUser}>

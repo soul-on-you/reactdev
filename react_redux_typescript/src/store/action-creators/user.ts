@@ -1,14 +1,17 @@
 import axios from "axios";
+import { isEqualObject } from "crud-object-diff";
 import { Dispatch } from "redux";
 import {
   AddUserAction,
   DeleteUserAction,
   LoadUserAction,
   LoadUserErrorAction,
+  LoadUserSuccessAction,
   User,
   UserAction,
   UserActionTypes,
 } from "../../types/user";
+import { RootState } from "../reducers";
 
 export const addUserAction = (payload: User | User[]): AddUserAction => {
   return {
@@ -29,7 +32,7 @@ const loadUserAction = (): LoadUserAction => {
 };
 
 export const fetchUserAction = () => {
-  return async (dispatch: Dispatch<UserAction>, getState: any) => {
+  return async (dispatch: Dispatch<UserAction>, getState: () => RootState) => {
     try {
       dispatch(loadUserAction());
 
@@ -37,7 +40,14 @@ export const fetchUserAction = () => {
         "https://jsonplaceholder.typicode.com/users"
       );
 
-      dispatch(addUserAction(response.data));
+      const prevUsers = getState().user.users;
+      const newUsers = response.data.filter(
+        (user: User) => !prevUsers.find((u) => isEqualObject(u, user))
+      );
+
+      if (newUsers.length > 0) dispatch(addUserAction(newUsers));
+
+      dispatch(loadUserSuccessAction());
     } catch (error) {
       //   dispatch(loadUserErrorAction(error));
       dispatch(loadUserErrorAction("Не удалось загрузить пользователей"));
@@ -45,7 +55,13 @@ export const fetchUserAction = () => {
   };
 };
 
-export const loadUserErrorAction = (payload: string): LoadUserErrorAction => {
+const loadUserSuccessAction = (): LoadUserSuccessAction => {
+  return {
+    type: UserActionTypes.LOAD_USERS_SUCCESS,
+  };
+};
+
+const loadUserErrorAction = (payload: string): LoadUserErrorAction => {
   return {
     type: UserActionTypes.LOAD_USERS_ERROR,
     payload,
