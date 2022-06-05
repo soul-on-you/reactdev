@@ -11,22 +11,15 @@ export default function UserList(props: IUserListProps) {
 
   useEffect(() => {
     dispatch(fetchUserAction());
-  }, []);
+    console.log("useEffect USERLIST");
+  }, [dispatch]);
 
   if (isLoading) return <h2>Идет загрузка...</h2>;
 
   if (error) return <h2>{error}</h2>;
 
   return (
-    <div
-      style={{
-        width: "100%",
-        height: "100%",
-        padding: 20,
-        display: "flex",
-        justifyContent: "center",
-      }}
-    >
+    <div className="list__wrapper">
       {users.length > 0 ? (
         <div className="post__list">
           {users.map((user) => (

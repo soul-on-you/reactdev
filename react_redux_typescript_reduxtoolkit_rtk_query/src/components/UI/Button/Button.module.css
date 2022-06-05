@@ -1,0 +1,8 @@
+.Button {
+  padding: 5px 15px;
+  color: whitesmoke;
+  font-size: 14px;
+  background: teal;
+  border: 1px solid rgba(61, 53, 53, 0.466);
+  cursor: pointer;
+}

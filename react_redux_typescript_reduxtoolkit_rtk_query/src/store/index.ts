@@ -1,10 +1,15 @@
 import { configureStore } from "@reduxjs/toolkit";
+import { clientAPI } from "../service/ClientService";
 import { postAPI } from "../service/PostService";
 import { rootReducer } from "./reducers";
 
 export const setStore = () => {
   return configureStore({
     reducer: rootReducer,
+    middleware: (getdefaultMiddleware) =>
+      getdefaultMiddleware()
+        .concat(postAPI.middleware)
+        .concat(clientAPI.middleware),
   });
 };
 
