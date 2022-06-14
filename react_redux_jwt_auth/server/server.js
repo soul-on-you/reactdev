@@ -1,21 +1,29 @@
+require("dotenv").config({ path: `.${process.env.NODE_ENV}.env` });
+
 const express = require("express");
 const mongoose = require("mongoose");
+
+const requestLogger = require("./middleware/request.logger.middleware");
+const credentials = require("./middleware/credentials.middleware");
 const cors = require("cors");
+const corsOptions = require("./config/corsOptions");
+const cookieParser = require("cookie-parser");
 const authRouter = require("./routers/auth.router");
-const Role = require("./models/Role");
-const Graduation = require("./models/Graduation");
-
-//! PRODUCTION
-// require("dotenv").config({ path: "./.env.production.local" });
-
-//! DEVELOPMENT
-require("dotenv").config({ path: "./.env.development.local" });
+const authMiddleware = require("./middleware/auth.middleware");
+const errorLogger = require("./middleware/error.logger.middleware");
 
 const app = express();
 
-app.use(cors());
+app.use(requestLogger);
+app.use(credentials);
+app.use(cors(corsOptions));
 app.use(express.json());
+app.use(cookieParser());
 app.use("/api/auth", authRouter);
+
+app.use(authMiddleware);
+
+app.use(errorLogger);
 
 const start = async () => {
   try {

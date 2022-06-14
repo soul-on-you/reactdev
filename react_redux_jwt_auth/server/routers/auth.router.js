@@ -5,9 +5,8 @@ const jwt = require("jsonwebtoken");
 const { check, validationResult } = require("express-validator");
 const User = require("../models/User");
 const Role = require("../models/Role");
-const Logger = require("../loggers");
-const authMiddleware = require("../middleware/auth.middleware");
 const RefreshToken = require("../models/RefreshToken");
+const Logger = require("../loggers");
 
 const logger = Logger("auth");
 
@@ -45,7 +44,7 @@ router.post(
 
       if (candidate)
         return res
-          .status(400)
+          .status(409)
           .json({ message: "User with this email already exists" });
 
       const hashedPassword = await bcryptjs.hash(password, 6);
@@ -88,14 +87,14 @@ router.get(
 
       if (!user) {
         return res
-          .status(404)
+          .status(401)
           .json({ message: `User with this ${email} does not exist` });
       }
 
       const isMatchPasswd = await bcryptjs.compare(password, user.password);
 
       if (!isMatchPasswd) {
-        return res.status(400).json({ message: "Wrong password" });
+        return res.status(401).json({ message: "Wrong password" });
       }
 
       const accessToken = jwt.sign(
@@ -133,6 +132,14 @@ router.get(
         // }
       );
 
+      if (req.cookies?.jwt)
+        res.clearCookie("jwt", {
+          httpOnly: true,
+          sameSite: "None",
+          secure: true,
+        });
+
+      console.log(ers);
       res.cookie("jwt", refreshtoken, {
         httpOnly: true,
         maxAge: 24 * 60 * 60 * 1000,
@@ -154,7 +161,7 @@ router.get(
   }
 );
 
-router.get("/logout", authMiddleware, async (req, res) => {
+router.get("/logout", async (req, res) => {
   try {
     const refreshToken = req.cookies?.jwt;
 
@@ -192,7 +199,7 @@ router.get("/logout", authMiddleware, async (req, res) => {
   }
 });
 
-router.get("/auth", authMiddleware, async (req, res) => {
+router.get("/auth", async (req, res) => {
   try {
     const user = await User.findById(req.userId);
 
@@ -234,25 +241,42 @@ router.get("/refresh", async (req, res) => {
     //   }
     // });
 
-    if (!(await RefreshToken.findOne({ token: refreshToken }))) {
-      logger.error("Error in finding refresh token, It may be forbidden!", {
+    res.clearCookie("jwt", { httpOnly: true, sameSite: "None", secure: true });
+
+    const foundUser = await RefreshToken.findOne({ token: refreshToken });
+    if (!foundUser) {
+      logger.error("Error in finding refresh token", {
         token: refreshToken,
-        tokenData: jwt.verify(refreshToken, process.env.JWT_REFRESH_SECRET),
+        tokenData: jwt.verify(
+          refreshToken,
+          process.env.JWT_REFRESH_SECRET,
+          async (err, decoded) => {
+            if (err)
+              return res.status(403).json({ message: "Invalid refresh token" });
+
+            const hackedUser = await User.findById(decoded.userId);
+            return hackedUser;
+          }
+        ),
         error: err.message,
       });
-
-      return res.status(401).json({ message: "No refresh token" });
+      return res.status(403).json({ message: "Invalid refresh token" });
     }
 
-    const userId = jwt.verify(
+    const { userId } = jwt.verify(
       refreshToken,
-      process.env.JWT_REFRESH_SECRET
-    ).userId;
+      process.env.JWT_REFRESH_SECRET,
+      (error) => {
+        if (error) {
+          return res.status(403).json({ message: "Expired refresh token" });
+        }
+      }
+    );
 
     const user = await User.findById(userId);
 
     if (!user) {
-      return res.status(401).json({ message: `Uncorrect refreshtoken data` });
+      return res.status(401).json({ message: `Uncorrect refresh token data` });
     }
 
     const accessToken = jwt.sign(
