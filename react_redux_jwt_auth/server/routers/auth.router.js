@@ -64,7 +64,7 @@ router.post(
   }
 );
 
-router.get(
+router.post(
   "/login",
   [
     check("email", "Email is required").isEmail(),
@@ -84,7 +84,6 @@ router.get(
       const { email, password } = req.body;
 
       const user = await User.findOne({ email });
-
       if (!user) {
         return res
           .status(401)
@@ -107,7 +106,7 @@ router.get(
           },
         },
         process.env.JWT_ACCESS_SECRET,
-        { expiresIn: "1h" }
+        { expiresIn: "15s" }
       );
 
       const refreshtoken = jwt.sign(
@@ -139,7 +138,6 @@ router.get(
           secure: true,
         });
 
-      console.log(ers);
       res.cookie("jwt", refreshtoken, {
         httpOnly: true,
         maxAge: 24 * 60 * 60 * 1000,
@@ -189,6 +187,7 @@ router.get("/logout", async (req, res) => {
     );
 
     res.clearCookie("jwt", { httpOnly: true, sameSite: "None", secure: true });
+
     res.status(204).json({ message: "Logout success" });
   } catch (e) {
     logger.error("Fail user logout with data: ", {
@@ -289,7 +288,7 @@ router.get("/refresh", async (req, res) => {
         },
       },
       process.env.JWT_ACCESS_SECRET,
-      { expiresIn: "1h" }
+      { expiresIn: "15s" }
     );
 
     const refreshtoken = jwt.sign(
