@@ -1,8 +1,8 @@
 const { Schema, model, ObjectId } = require("mongoose");
 
 const Professor = new Schema({
-  userID: { type: ObjectId, required: true, ref: "User" },
-  students: [{ type: ObjectId, ref: "Student" }],
+  userId: { type: ObjectId, required: true, ref: "User" },
+  groups: [{ type: ObjectId, ref: "StudentGroup" }],
   createdAt: { type: Date, default: Date.now },
   updatedAt: { type: Date, default: Date.now },
 });
