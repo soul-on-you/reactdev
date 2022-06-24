@@ -95,28 +95,39 @@ function Navbar() {
   const navigate = useNavigate();
   const location = useLocation();
   console.log(location);
-  
+
   const routes = useMemo(
     () => [
       { label: "Home", key: "home", onClick: () => navigate("/") },
       { label: "Counter", key: "counter", onClick: () => navigate("/counter") },
       { label: "About", key: "about", onClick: () => navigate("/about") },
       { label: "Contact", key: "contact", onClick: () => navigate("/contact") },
+      { label: "Dev", key: "dev", onClick: () => navigate("/dev") },
     ],
     // eslint-disable-next-line react-hooks/exhaustive-deps
     []
   );
 
   return (
-    <Header className="header">
+    <Header
+      className="header"
+      style={{
+        margin: 0,
+        padding: 0,
+        position: "sticky",
+        zIndex: 10,
+        top: 0,
+        width: "100%",
+      }}
+    >
       {/* <Row justify="start"> */}
-        <div className="logo" />
-        <Menu
-          theme="dark"
-          mode="horizontal"
-          defaultSelectedKeys={[location.pathname.slice(1) || "home"]}
-          items={routes}
-        />
+      <div className="logo" />
+      <Menu
+        theme="dark"
+        mode="horizontal"
+        defaultSelectedKeys={[location.pathname.slice(1) || "home"]}
+        items={routes}
+      />
       {/* </Row> */}
       {/* <Row justify="end">
         <Menu.Item key="login" onClick={() => navigate("/login")}>

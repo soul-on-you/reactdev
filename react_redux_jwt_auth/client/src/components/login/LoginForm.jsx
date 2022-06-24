@@ -154,11 +154,11 @@ const LoginForm = () => {
     <Row justify="space-around" align="middle">
       <Col
         className={styles.login_form}
-        xs={20}
-        sm={16}
-        md={12}
-        lg={10}
-        xl={10}
+        // xs={20}
+        // sm={16}
+        // md={12}
+        // lg={10}
+        // xl={10}
       >
         <Space
           direction="vertical"
@@ -175,6 +175,7 @@ const LoginForm = () => {
             type="error"
           />
 
+          <></>
           <Spin spinning={isLoading}>
             <Form
               form={form}
@@ -218,12 +219,12 @@ const LoginForm = () => {
                   placeholder="Password"
                 />
               </Form.Item>
-              <Form.Item>
+              <Form.Item >
                 <Form.Item name="remember" valuePropName="checked" noStyle>
                   <Checkbox>Remember me</Checkbox>
                 </Form.Item>
 
-                <Link to={"/"}>Forgot password</Link>
+                <Link to={"/"}>Forgot password?</Link>
               </Form.Item>
 
               <Form.Item>
