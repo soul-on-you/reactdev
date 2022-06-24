@@ -97,7 +97,7 @@ import { Link, useLocation } from "react-router-dom";
 import styles from "./LoginForm.module.css";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { useLoginMutation } from "../../api/authApi";
+import { useLoginMutation } from "../../api/AuthApi";
 import { login } from "../../store/slices/AuthSlice";
 
 const LoginForm = () => {

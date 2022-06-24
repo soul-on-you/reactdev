@@ -32,18 +32,8 @@ const baseQueryWithReauth = async (args, api, extraOptions) => {
   return resultQuery;
 };
 
-export const authAPI = createApi({
-  reducerPath: "auth_api",
+export const apiMiddleware = createApi({
+  reducerPath: "api",
   baseQuery: baseQueryWithReauth,
-  endpoints: (builder) => ({
-    login: builder.mutation({
-      query: (credentials) => ({
-        url: "/login",
-        method: "POST",
-        body: { ...credentials },
-      }),
-    }),
-  }),
+  endpoints: (builder) => ({}),
 });
-
-export const { useLoginMutation } = authAPI;
