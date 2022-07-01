@@ -4,18 +4,25 @@
   "description": "server for jwt auth handle",
   "main": "index.js",
   "scripts": {
-    "start": "cross-env NODE_ENV=production node server.js",
-    "dev": "cross-env NODE_ENV=development nodemon server.js"
+    "start": "cross-env NODE_ENV=production node index.js",
+    "dev": "cross-env NODE_ENV=development nodemon index.js",
+    "test": "jest --watchAll"
   },
   "nodemonConfig": {
     "ignore": [
-      "*/logs/"
+      "*/logs/",
+      "*/files/"
+    ]
+  },
+  "jest": {
+    "watchPathIgnorePatterns": [
+      "server/logger",
+      "server/files"
     ]
   },
   "author": "diomedialc",
   "license": "MIT",
   "dependencies": {
-    "@react-three/gltfjsx": "^4.3.4",
     "bcryptjs": "^2.4.3",
     "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",
@@ -28,6 +35,8 @@
     "winston": "^3.7.2"
   },
   "devDependencies": {
-    "cross-env": "^7.0.3"
+    "cross-env": "^7.0.3",
+    "jest": "^28.1.1",
+    "supertest": "^6.2.3"
   }
 }
